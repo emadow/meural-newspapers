@@ -1,0 +1,22 @@
+[
+  {
+    "name": "The New York Times",
+    "shortname": "nyt",
+    "url": "NY_NYT.pdf"
+  },
+  {
+    "name": "The Wall Street Journal",
+    "shortname": "wsj",
+    "url": "WSJ.pdf"
+  },
+  {
+    "name": "San Francisco Chronicle",
+    "shortname": "sfchronicle",
+    "url": "CA_SFC.pdf"
+  },
+  {
+    "name": "The Seattle Times",
+    "shortname": "seattletimes",
+    "url": "WA_ST.pdf"
+  }
+]

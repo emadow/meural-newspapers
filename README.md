@@ -1,0 +1,6 @@
+## Welcome to meural-newspapers!
+The goal of this project is to fetch newspaper front pages every morning to display on a Meural frame
+
+### Prerequisites
+* ImageMagick must be installed on the system, the node package included in this project is just a wrapper. Install via brew or other package manager.
+* Run `npx tsc && node index.js` to compile and run (for now)
