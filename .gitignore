@@ -1,5 +1,6 @@
 .DS_Store
-index.js
+*.js
 node_modules
 newspaper-cache/*.pdf
 newspaper-cache/jpgs/*
+config.json
