@@ -1,9 +1,18 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
+import FormData from 'form-data';
+import fs from 'fs';
 
-interface MeuralImage {
+interface MeuralItem {
   id: number;
   image: string;
   originalImage: string;
+}
+
+interface MeuralGallery {
+  id: number;
+  name: string;
+  description?: string;
+  orientation: 'horizontal' | 'vertical';
 }
 
 export class MeuralClient {
@@ -19,51 +28,99 @@ export class MeuralClient {
 
   get headers() {
     return {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Token ${this.authToken}`,
     };
   }
 
   async authenticate() {
-    var urlencoded = new URLSearchParams();
-    urlencoded.append('username', this.username);
-    urlencoded.append('password', this.password);
+    const params = new URLSearchParams();
+    params.append('username', this.username);
+    params.append('password', this.password);
 
-    const response = await fetch('https://api.meural.com/v1/authenticate', {
+    const response = await axios('https://api.meural.com/v1/authenticate', {
       method: 'POST',
-      body: urlencoded,
+      data: params,
     });
 
-    const responseBody = await response.json();
-    this.authToken = responseBody.token;
+    this.authToken = response.data.token;
     return this.authToken;
   }
 
   async getUserGalleries() {
-    const response = await fetch('https://api.meural.com/v1/user/galleries?count=100', {
+    const response = await axios('https://api.meural.com/v1/user/galleries?count=100', {
       headers: this.headers,
     });
 
-    const responseBody = await response.json();
-    return responseBody.data;
+    return response.data;
   }
 
-  async getGalleryItems(id: number): Promise<MeuralImage[]> {
-    const response = await fetch(`https://api.meural.com/v1/galleries/${id}/items`, {
+  async getGalleryItems(id: number): Promise<MeuralItem[]> {
+    const response = await axios(`https://api.meural.com/v1/galleries/${id}/items`, {
       headers: this.headers,
     });
 
-    const responseBody = await response.json();
-    return responseBody.data;
+    return response.data;
   }
 
-  async deleteImage(id: number): Promise<MeuralImage[]> {
-    const response = await fetch(`https://api.meural.com/v1/items/${id}`, {
+  async createGallery(
+    name: string,
+    description: string,
+    orientation: MeuralGallery['orientation']
+  ): Promise<MeuralGallery> {
+    const params = new URLSearchParams();
+    params.append('name', name);
+    params.append('description', description);
+    params.append('orientation', orientation);
+
+    const response = await axios('https://api.meural.com/v1/galleries', {
+      method: 'POST',
+      headers: this.headers,
+      data: params,
+    });
+
+    return response.data;
+  }
+
+  async createGalleryItem(galleryId: number, itemId: number): Promise<MeuralGallery> {
+    const response = await axios(
+      `https://api.meural.com/v1/galleries/${galleryId}/items/${itemId}`,
+      {
+        method: 'POST',
+        headers: this.headers,
+      }
+    );
+
+    return response.data;
+  }
+
+  async deleteItem(id: number): Promise<MeuralItem[]> {
+    const response = await axios(`https://api.meural.com/v1/items/${id}`, {
       headers: this.headers,
       method: 'DELETE',
     });
 
-    const responseBody = await response.json();
-    return responseBody.data;
+    return response.data;
+  }
+
+  async createItem(filePath: string): Promise<MeuralItem> {
+    const formdata = new FormData();
+    const stats = fs.statSync(filePath);
+    const fileSizeInBytes = stats.size;
+    formdata.append('image', fs.createReadStream(filePath), {
+      knownLength: fileSizeInBytes,
+    });
+
+    const response = await axios('https://api.meural.com/v1/items', {
+      method: 'POST',
+      headers: {
+        ...this.headers,
+        'Content-Type': 'multipart/form-data',
+        ...formdata.getHeaders(),
+      },
+      data: formdata,
+    });
+
+    return response.data;
   }
 }

@@ -24,13 +24,18 @@ import {MeuralClient} from './meural';
     );
   }
 
+  throw new Error('stopping here');
+
   // Log into Meural
+  if (!config.meural_email || !config.meural_password)
+    throw new Error('Missing Meural credentials');
   const meuralClient = new MeuralClient(config.meural_email, config.meural_password);
   await meuralClient.authenticate();
 
   const galleries = await meuralClient.getUserGalleries();
 
-  // See if there's an existing gallery to use
+  if (!config.meural_gallery_name) throw new Error('Missing Meural gallery name');
+
   let galleryId;
   let existingImageIds;
   for (const gallery of galleries) {
@@ -39,15 +44,37 @@ import {MeuralClient} from './meural';
     }
   }
 
-  if (galleryId) {
+  if (!galleryId) {
+    // create a new gallery
+    const createGalleryResponse = await meuralClient.createGallery(
+      config.meural_gallery_name,
+      'newspapers',
+      'vertical'
+    );
+    galleryId = createGalleryResponse.id;
+  } else {
+    // clear out the existing gallery
     const existingImages = await meuralClient.getGalleryItems(galleryId);
-    existingImageIds = existingImages.map(image => image.id);
+    if (existingImages.length > 0) {
+      existingImageIds = existingImages.map(image => image.id);
 
-    // remove existing images
-    const deletePromises: any[] = [];
-    existingImageIds.forEach(imageId => {
-      deletePromises.push(meuralClient.deleteImage.call(meuralClient, imageId));
-    });
-    await Promise.all(deletePromises);
+      const deletePromises: any[] = [];
+      existingImageIds.forEach((imageId: number) => {
+        deletePromises.push(meuralClient.deleteItem.call(meuralClient, imageId));
+      });
+      await Promise.all(deletePromises);
+    }
+  }
+
+  // Upload all the images to Meural
+  const jpgs = await getDirectoryContents(`${NEWSPAPAPER_CACHE_PATH}/jpgs`);
+
+  for (const jpg of jpgs) {
+    // upload it
+    const uploadImageResult = await meuralClient.createItem(
+      `${NEWSPAPAPER_CACHE_PATH}/jpgs/${jpg}`
+    );
+    // add it to the gallery
+    await meuralClient.createGalleryItem(galleryId, uploadImageResult.id);
   }
 })();

@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 import fs from 'fs';
 import im from 'imagemagick';
 import path from 'path';
@@ -10,16 +10,12 @@ export const NEWSPAPAPER_CACHE_PATH = './newspaper-cache';
 
 export const downloadFile = async (url: string, path: string) => {
   try {
-    const response = await fetch(url);
-    const file = await response.buffer();
-    fs.writeFile(path, file, err => {
-      if (err) {
-        console.log(err);
-        return;
-      }
+    const response = await axios(url, {
+      responseType: 'arraybuffer',
     });
+    await fs.writeFileSync(path, response.data);
   } catch (error) {
-    // gracefully handle download issues
+    // gracefully fail if a file fails to download
     console.log(error);
   }
 };
@@ -85,7 +81,7 @@ export const cropImage = async (file: string, width: number, height: number) => 
 export const processPdf = async (inputFile: string, convertedFileName: string) => {
   await convertImage(inputFile, convertedFileName);
 
-  const ratioMagicNumber = 1.77777; // 16x9
+  const desiredAspectRatio = 16 / 9;
   const threshholdForRatioEnforcement = 0.07; // 7%
 
   const imageProperties = await getImageProperties(convertedFileName);
@@ -94,10 +90,10 @@ export const processPdf = async (inputFile: string, convertedFileName: string) =
   const imageHeight = imageProperties.height || 0;
 
   if (
-    1 - Math.abs(imageWidth * ratioMagicNumber) / Math.abs(imageHeight) >
+    1 - Math.abs(imageWidth * desiredAspectRatio) / Math.abs(imageHeight) >
     threshholdForRatioEnforcement
   ) {
-    console.log(`${convertedFileName} is not close to a 16x9 image, cropping`);
-    await cropImage(convertedFileName, imageWidth, imageWidth * ratioMagicNumber);
+    console.log(`${convertedFileName} is not close to a 16x9 (9/16 vertical) image, cropping`);
+    await cropImage(convertedFileName, imageWidth, imageWidth * desiredAspectRatio);
   }
 };
