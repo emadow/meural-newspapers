@@ -18,5 +18,10 @@
     "name": "The Seattle Times",
     "shortname": "seattletimes",
     "url": "WA_ST.pdf"
+  },
+  {
+    "name": "The Dallas Morning News",
+    "shortname": "dallasmorningnews",
+    "url": "TX_DMN.pdf"
   }
 ]
