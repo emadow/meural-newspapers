@@ -8,6 +8,12 @@ interface MeuralItem {
   originalImage: string;
 }
 
+export interface MeuralDevice {
+  alias: string;
+  id: number;
+  // a bunch of others
+}
+
 interface MeuralGallery {
   id: number;
   name: string;
@@ -47,12 +53,20 @@ export class MeuralClient {
     return this.authToken;
   }
 
+  async getUserDevices() {
+    const response = await axios('https://api.meural.com/v1/user/devices', {
+      headers: this.headers,
+    });
+
+    return response.data.data;
+  }
+
   async getUserGalleries() {
     const response = await axios('https://api.meural.com/v1/user/galleries?count=100', {
       headers: this.headers,
     });
 
-    return response.data;
+    return response.data.data;
   }
 
   async getGalleryItems(id: number): Promise<MeuralItem[]> {
@@ -120,6 +134,18 @@ export class MeuralClient {
       },
       data: formdata,
     });
+
+    return response.data.data;
+  }
+
+  async pushGalleryToDevice(deviceId: number, galleryId: number): Promise<any> {
+    const response = await axios(
+      `https://api.meural.com/v1/devices/${deviceId}/galleries/${galleryId}`,
+      {
+        method: 'POST',
+        headers: this.headers,
+      }
+    );
 
     return response.data;
   }

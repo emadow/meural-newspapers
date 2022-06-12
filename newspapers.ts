@@ -44,6 +44,7 @@ export const downloadNewspaperPDFs = async () => {
   const dayOfMonth = date.getDate();
 
   for (const newspaper of newspapers) {
+    console.log('downloading: ', newspaper.name);
     await downloadFile(
       NEWSPAPER_BASE_URL.replace('{DAY_OF_MONTH}', `${dayOfMonth}`) + newspaper.url,
       `${NEWSPAPAPER_CACHE_PATH}/${newspaper.shortname}_${month}_${dayOfMonth}.pdf`
