@@ -119,11 +119,7 @@ export class MeuralClient {
 
   async createItem(filePath: string): Promise<MeuralItem> {
     const formdata = new FormData();
-    const stats = fs.statSync(filePath);
-    const fileSizeInBytes = stats.size;
-    formdata.append('image', fs.createReadStream(filePath), {
-      knownLength: fileSizeInBytes,
-    });
+    formdata.append('image', fs.createReadStream(filePath));
 
     const response = await axios('https://api.meural.com/v1/items', {
       method: 'POST',
