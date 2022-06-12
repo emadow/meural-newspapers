@@ -72,7 +72,7 @@ export const convertImage = async (inputFile: string, outputFile: string) => {
 
 export const cropImage = async (file: string, width: number, height: number) => {
   return new Promise((resolve, reject) => {
-    im.convert(['-crop', `${width}x${height}+0+0`, file, file], async err => {
+    im.convert(['-gravity', 'North', '-crop', `${width}x${height}+0+0`, file, file], async err => {
       if (err) reject(err);
       resolve(true);
     });
