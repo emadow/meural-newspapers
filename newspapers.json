@@ -10,6 +10,11 @@
     "url": "WSJ.pdf"
   },
   {
+    "name": "The Washington Post",
+    "shortname": "wp",
+    "url": "DC_WP.pdf"
+  },
+  {
     "name": "San Francisco Chronicle",
     "shortname": "sfchronicle",
     "url": "CA_SFC.pdf"
