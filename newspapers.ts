@@ -17,7 +17,7 @@ export const downloadFile = async (url: string, path: string) => {
     await fs.writeFileSync(path, response.data);
   } catch (error: any) {
     // gracefully fail if a file fails to download
-    logger(`Failed: ${error.statusMessage}`, {sentiment: 'negative', processLevel: 2});
+    logger(`Failed: ${error.message}`, {sentiment: 'negative', processLevel: 2});
   }
 };
 
