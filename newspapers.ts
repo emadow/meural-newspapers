@@ -7,7 +7,7 @@ import {logger} from './logger';
 import newspapers from './newspapers.json';
 
 export const NEWSPAPER_BASE_URL = 'https://cdn.freedomforum.org/dfp/pdf{DAY_OF_MONTH}/';
-export const NEWSPAPAPER_CACHE_PATH = './newspaper-cache';
+export const NEWSPAPAPER_CACHE_PATH = path.resolve(__dirname, './newspaper-cache');
 
 export const downloadFile = async (url: string, path: string) => {
   try {
