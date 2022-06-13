@@ -7,18 +7,21 @@ import {
   processPdf,
 } from './newspapers';
 
+import {logger} from './logger';
 import {MeuralClient, MeuralDevice} from './meural';
 
 (async function () {
   // Clean up our local cache
+  logger('Clearing Local Cache');
   await clearDirectory(NEWSPAPAPER_CACHE_PATH);
   await clearDirectory(NEWSPAPAPER_CACHE_PATH + '/jpgs');
+
   await downloadNewspaperPDFs();
   const pdfs = await getDirectoryContents(NEWSPAPAPER_CACHE_PATH);
 
   // Convert each PDF to a JPEG, resize if needed
   for (const pdf of pdfs) {
-    console.log('converting: ', pdf);
+    logger(`Converting ${pdf}`);
     await processPdf(
       `${NEWSPAPAPER_CACHE_PATH}/${pdf}`,
       `${NEWSPAPAPER_CACHE_PATH}/jpgs/${pdf.replace('.pdf', '.jpg')}`
@@ -43,14 +46,14 @@ import {MeuralClient, MeuralDevice} from './meural';
   let existingImageIds;
   for (const gallery of galleries) {
     if (gallery.name === config.meural_gallery_name) {
-      console.log('found existing gallery: ', gallery.name);
+      logger(`Found existing gallery ${gallery.name}`, {sentiment: 'positive'});
       galleryId = gallery.id;
     }
   }
 
   if (!galleryId) {
     // create a new gallery
-    console.log('creating new Meural gallery');
+    logger('Creating a new Meural gallery');
     const createGalleryResponse = await meuralClient.createGallery(
       config.meural_gallery_name,
       'newspapers',
@@ -62,12 +65,15 @@ import {MeuralClient, MeuralDevice} from './meural';
     const existingImages = await meuralClient.getGalleryItems(galleryId);
     if (existingImages.length > 0) {
       existingImageIds = existingImages.map(image => image.id);
-      console.log('deleting existing images from meural gallery: ', existingImageIds);
       const deletePromises: any[] = [];
       existingImageIds.forEach((imageId: number) => {
         deletePromises.push(meuralClient.deleteItem.call(meuralClient, imageId));
       });
-      await Promise.all(deletePromises);
+      await Promise.allSettled(deletePromises);
+      logger(`Deleted existing images: ${existingImageIds.toString()}`, {
+        processLevel: 2,
+        sentiment: 'positive',
+      });
     }
   }
 
@@ -75,16 +81,20 @@ import {MeuralClient, MeuralDevice} from './meural';
   const jpgs = await getDirectoryContents(`${NEWSPAPAPER_CACHE_PATH}/jpgs`);
 
   for (const jpg of jpgs) {
-    console.log('uploading: ', jpg);
+    logger(`Uploading: ${jpg}`);
     const uploadImageResult = await meuralClient.createItem(
       `${NEWSPAPAPER_CACHE_PATH}/jpgs/${jpg}`
     );
 
+    logger('Upload complete', {sentiment: 'positive', processLevel: 2});
+
     // add it to the gallery
-    console.log('adding to gallery: ', uploadImageResult.id);
     await meuralClient.createGalleryItem(galleryId, uploadImageResult.id);
+    logger('Added to gallery', {sentiment: 'positive', processLevel: 2});
   }
 
-  console.log('pushing gallery to device');
+  logger('Pushing gallery to device');
   await meuralClient.pushGalleryToDevice(targetDevice.id, galleryId);
+
+  logger('Process complete', {sentiment: 'positive'});
 })();

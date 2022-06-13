@@ -74,7 +74,7 @@ export class MeuralClient {
       headers: this.headers,
     });
 
-    return response.data;
+    return response.data.data;
   }
 
   async createGallery(
@@ -93,7 +93,7 @@ export class MeuralClient {
       data: params,
     });
 
-    return response.data;
+    return response.data.data;
   }
 
   async createGalleryItem(galleryId: number, itemId: number): Promise<MeuralGallery> {
@@ -105,7 +105,7 @@ export class MeuralClient {
       }
     );
 
-    return response.data;
+    return response.data.data;
   }
 
   async deleteItem(id: number): Promise<MeuralItem[]> {
@@ -143,6 +143,6 @@ export class MeuralClient {
       }
     );
 
-    return response.data;
+    return response.data.data;
   }
 }

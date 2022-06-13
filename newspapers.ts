@@ -3,6 +3,7 @@ import fs from 'fs';
 import im from 'imagemagick';
 import path from 'path';
 
+import {logger} from './logger';
 import newspapers from './newspapers.json';
 
 export const NEWSPAPER_BASE_URL = 'https://cdn.freedomforum.org/dfp/pdf{DAY_OF_MONTH}/';
@@ -14,9 +15,9 @@ export const downloadFile = async (url: string, path: string) => {
       responseType: 'arraybuffer',
     });
     await fs.writeFileSync(path, response.data);
-  } catch (error) {
+  } catch (error: any) {
     // gracefully fail if a file fails to download
-    console.log(error);
+    logger(`Failed: ${error.statusMessage}`, {sentiment: 'negative', processLevel: 2});
   }
 };
 
@@ -44,7 +45,7 @@ export const downloadNewspaperPDFs = async () => {
   const dayOfMonth = date.getDate();
 
   for (const newspaper of newspapers) {
-    console.log('downloading: ', newspaper.name);
+    logger(`Downloading ${newspaper.name}`);
     await downloadFile(
       NEWSPAPER_BASE_URL.replace('{DAY_OF_MONTH}', `${dayOfMonth}`) + newspaper.url,
       `${NEWSPAPAPER_CACHE_PATH}/${newspaper.shortname}_${month}_${dayOfMonth}.pdf`
@@ -63,7 +64,7 @@ export const getImageProperties = async (file: string): Promise<im.Features> => 
 
 export const convertImage = async (inputFile: string, outputFile: string) => {
   return new Promise((resolve, reject) => {
-    im.convert(['-density', '300', inputFile, outputFile], async err => {
+    im.convert(['-density', '225', inputFile, outputFile], async err => {
       if (err) reject(err);
       resolve(true);
     });
@@ -83,7 +84,7 @@ export const processPdf = async (inputFile: string, convertedFileName: string) =
   await convertImage(inputFile, convertedFileName);
 
   const desiredAspectRatio = 16 / 9;
-  const threshholdForRatioEnforcement = 0.07; // 7%
+  const threshholdForRatioEnforcement = 0.04; // meural will crop the image which is probably fine, but not beyond 4%
 
   const imageProperties = await getImageProperties(convertedFileName);
 
@@ -94,7 +95,8 @@ export const processPdf = async (inputFile: string, convertedFileName: string) =
     1 - Math.abs(imageWidth * desiredAspectRatio) / Math.abs(imageHeight) >
     threshholdForRatioEnforcement
   ) {
-    console.log(`${convertedFileName} is not close to a 16x9 (9/16 vertical) image, cropping`);
+    logger(`Image needs cropping`, {processLevel: 2});
     await cropImage(convertedFileName, imageWidth, imageWidth * desiredAspectRatio);
+    logger(`Complete`, {processLevel: 3, sentiment: 'positive'});
   }
 };
