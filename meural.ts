@@ -1,7 +1,6 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
-import 'url-search-params-polyfill'; // shouldn't need this but will debug later
 
 interface MeuralItem {
   id: number;
