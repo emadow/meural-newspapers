@@ -1,1 +1,6 @@
 remote_theme: rohanchandra/type-theme
+
+theme:
+  title: Project Notes
+  avatar:
+  gravatar:
