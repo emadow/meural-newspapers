@@ -4,3 +4,6 @@ theme:
   title: Project Notes
   avatar:
   gravatar:
+
+baseurl: ""
+url: "https://notes.evanm.com"
