@@ -1,9 +1,5 @@
 remote_theme: rohanchandra/type-theme
 
-theme:
-  title: Project Notes
-  avatar:
-  gravatar:
-
-baseurl: ""
-url: "https://notes.evanm.com"
+theme_settings:
+  # Meta
+  title: evanm > Projects
