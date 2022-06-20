@@ -1,6 +1,8 @@
 # Meural Newspapers
 I put together a project that fetches print editions of my favorite newspapers every morning and showcases them on a frame, rotating throughout the day.
 
+https://user-images.githubusercontent.com/490190/174654390-c0c13f09-4ae3-43f6-a76f-608483b9554d.mp4
+
 _Demo of the project, cycling through content manually with gestures_
 
 ## Background
