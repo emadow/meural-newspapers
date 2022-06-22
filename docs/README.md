@@ -50,6 +50,8 @@ export const convertImage = async (inputFile: string, outputFile: string) => {
 
 One problem: the aspect ratio of the Meural was 16:9 (well, 9:16 since it was oriented vertically), and some of these front pages are too long. After determining which images need to be cropped, we just want to truncate the bottoms since a center-oriented crop would chop bits from the both sides (and result in an awkward framing).
 
+![Meural Newspaper](https://user-images.githubusercontent.com/490190/174932951-c3d672e0-1d79-4b34-a170-beb25850bb48.jpg)
+
 This, too, is pretty easy to handle using ImageMagick:
 
 ```ts
