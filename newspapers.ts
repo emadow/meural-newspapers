@@ -64,10 +64,13 @@ export const getImageProperties = async (file: string): Promise<im.Features> => 
 
 export const convertImage = async (inputFile: string, outputFile: string) => {
   return new Promise((resolve, reject) => {
-    im.convert(['-density', '225', '-colorspace', 'sRGB', inputFile, outputFile], async err => {
-      if (err) reject(err);
-      resolve(true);
-    });
+    im.convert(
+      ['-density', '225', '-background', 'White', '-layers', 'flatten', inputFile, outputFile],
+      async err => {
+        if (err) reject(err);
+        resolve(true);
+      }
+    );
   });
 };
 
