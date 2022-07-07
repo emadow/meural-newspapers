@@ -30,6 +30,11 @@
     "url": "TX_DMN.pdf"
   },
   {
+    "name": "The Florida Times-Union",
+    "shortname": "fltimesunion",
+    "url": "FL_FTU.pdf"
+  },
+  {
     "name": "The Boston Globe",
     "shortname": "bostonglobe",
     "url": "MA_BG.pdf"
