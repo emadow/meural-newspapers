@@ -89,19 +89,23 @@ import {MeuralClient, MeuralDevice} from './meural';
 
   for (const jpg of jpgs) {
     logger(`Uploading: ${jpg}`);
-    const uploadImageResult = await meuralClient.createItem(
-      `${NEWSPAPAPER_CACHE_PATH}/jpgs/${jpg}`
-    );
+    try {
+      const uploadImageResult = await meuralClient.createItem(
+        `${NEWSPAPAPER_CACHE_PATH}/jpgs/${jpg}`
+      );
 
-    logger('Upload complete', {sentiment: 'positive', processLevel: 2});
+      logger('Upload complete', {sentiment: 'positive', processLevel: 2});
 
-    // add it to the gallery
-    await meuralClient.createGalleryItem(galleryId, uploadImageResult.id);
-    logger('Added to gallery', {sentiment: 'positive', processLevel: 2});
+      // add it to the gallery
+      await meuralClient.createGalleryItem(galleryId, uploadImageResult.id);
+      logger('Added to gallery', {sentiment: 'positive', processLevel: 2});
+
+      logger('Pushing gallery to device');
+      await meuralClient.pushGalleryToDevice(targetDevice.id, galleryId);
+    } catch (e) {
+      logger(`Error adding image: ${e}`, {sentiment: 'negative', processLevel: 2});
+    }
   }
-
-  logger('Pushing gallery to device');
-  await meuralClient.pushGalleryToDevice(targetDevice.id, galleryId);
 
   logger('Process complete', {sentiment: 'positive'});
 })();
