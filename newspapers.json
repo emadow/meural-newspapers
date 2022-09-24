@@ -1,42 +1,26 @@
 [
-  {
-    "name": "The New York Times",
-    "shortname": "nyt",
-    "url": "NY_NYT.pdf"
-  },
-  {
-    "name": "The Wall Street Journal",
-    "shortname": "wsj",
-    "url": "WSJ.pdf"
-  },
-  {
-    "name": "The Washington Post",
-    "shortname": "wp",
-    "url": "DC_WP.pdf"
-  },
-  {
-    "name": "San Francisco Chronicle",
-    "shortname": "sfchronicle",
-    "url": "CA_SFC.pdf"
-  },
-  {
-    "name": "The Seattle Times",
-    "shortname": "seattletimes",
-    "url": "WA_ST.pdf"
-  },
-  {
-    "name": "The Dallas Morning News",
-    "shortname": "dallasmorningnews",
-    "url": "TX_DMN.pdf"
-  },
-  {
-    "name": "The Florida Times-Union",
-    "shortname": "fltimesunion",
-    "url": "FL_FTU.pdf"
-  },
-  {
-    "name": "The Boston Globe",
-    "shortname": "bostonglobe",
-    "url": "MA_BG.pdf"
-  }
+  {"url": "TX_DMN.pdf", "name": "The Dallas Morning News", "shortname": "dallasmorningnews"},
+  {"url": "FL_FTU.pdf", "name": "The Florida Times-Union", "shortname": "fltimesunion"},
+  {"url": "AK_ADN.pdf", "name": "Anchorage Daily News", "shortname": "anchorage"},
+  {"url": "CA_SFC.pdf", "name": "San Francisco Chronicle", "shortname": "sfchronicle"},
+  {"url": "DC_WP.pdf", "name": "The Washington Post", "shortname": "wapost"},
+  {"url": "DC_WT.pdf", "name": "The Washington Times", "shortname": "watimes"},
+  {"url": "HI_SA.pdf", "name": "The Honolulu Star-Advertiser", "shortname": "honolulu"},
+  {"url": "IL_CT.pdf", "name": "Chicago Tribune", "shortname": "chigagotribune"},
+  {"url": "MD_TS.pdf", "name": "The Baltimore Sun", "shortname": "baltosun"},
+  {"url": "MA_BG.pdf", "name": "The Boston Globe", "shortname": "bostonglobe"},
+  {"url": "MI_DFP.pdf", "name": "Detroit Free Press", "shortname": "detroitfreepress"},
+  {"url": "MN_ST.pdf", "name": "Star Tribune", "shortname": "startribune"},
+  {"url": "MO_SLPD.pdf", "name": "St. Louis Post-Dispatch", "shortname": "stlouis"},
+  {"url": "NY_NYT.pdf", "name": "The New York Times", "shortname": "nyt"},
+  {"url": "WSJ.pdf", "name": "The Wall Street Journal", "shortname": "wsj"},
+  {"url": "NC_HS.pdf", "name": "The Herald-Sun", "shortname": "heraldsun"},
+  {"url": "OH_CPD.pdf", "name": "The Plain Dealer", "shortname": "plaindealer"},
+  {"url": "TN_CA.pdf", "name": "The Commercial Appeal", "shortname": "commercialappeal"},
+  {"url": "VT_BFP.pdf", "name": "The Burlington Free Press", "shortname": "burlingtonfreepress"},
+  {"url": "WA_ST.pdf", "name": "The Seattle Times", "shortname": "seattletimes"},
+  {"url": "WI_WSJ.pdf", "name": "Wisconsin State Journal", "shortname": "wisconsinstatejo"},
+  {"url": "CAN_TGAM.pdf", "name": "The Globe and Mail", "shortname": "globeandmail"},
+  {"url": "NEWZ_DP.pdf", "name": "The Dominion Post", "shortname": "dominionpost"},
+  {"url": "UK_TG.pdf", "name": "The Guardian", "shortname": "guardian"}
 ]

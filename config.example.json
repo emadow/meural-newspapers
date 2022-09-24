@@ -2,5 +2,7 @@
   "meural_email": "",
   "meural_password": "",
   "meural_gallery_name": "Todays papers",
-  "meural_device_alias": "Office"
+  "meural_device_alias": "Office",
+  "concurrent_downloads": 3,
+  "concurrent_image_processing": 3
 }

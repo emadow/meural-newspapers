@@ -2,14 +2,17 @@ import axios from 'axios';
 import fs from 'fs';
 import im from 'imagemagick';
 import path from 'path';
+import pLimit from 'p-limit';
 
 import {logger} from './logger';
+import config from './config.json';
 import newspapers from './newspapers.json';
 
 export const NEWSPAPER_BASE_URL = 'https://cdn.freedomforum.org/dfp/pdf{DAY_OF_MONTH}/';
 export const NEWSPAPAPER_CACHE_PATH = path.resolve(__dirname, './newspaper-cache');
 
 export const downloadFile = async (url: string, path: string) => {
+  logger(`Downloading ${url}`);
   try {
     const response = await axios(url, {
       responseType: 'arraybuffer',
@@ -44,12 +47,20 @@ export const downloadNewspaperPDFs = async () => {
   const month = date.getMonth() + 1;
   const dayOfMonth = date.getDate();
 
+  const papersToDownload = [];
+  const limit = pLimit(config.concurrent_downloads);
+
   for (const newspaper of newspapers) {
-    logger(`Downloading ${newspaper.name}`);
-    await downloadFile(
-      NEWSPAPER_BASE_URL.replace('{DAY_OF_MONTH}', `${dayOfMonth}`) + newspaper.url,
-      `${NEWSPAPAPER_CACHE_PATH}/${newspaper.shortname}_${month}_${dayOfMonth}.pdf`
+    papersToDownload.push(
+      limit(() =>
+        downloadFile(
+          NEWSPAPER_BASE_URL.replace('{DAY_OF_MONTH}', `${dayOfMonth}`) + newspaper.url,
+          `${NEWSPAPAPER_CACHE_PATH}/${newspaper.shortname}_${month}_${dayOfMonth}.pdf`
+        )
+      )
     );
+
+    await Promise.all(papersToDownload);
   }
 };
 
@@ -84,10 +95,11 @@ export const cropImage = async (file: string, width: number, height: number) => 
 };
 
 export const processPdf = async (inputFile: string, convertedFileName: string) => {
+  logger(`Converting ${inputFile}`);
   await convertImage(inputFile, convertedFileName);
 
   const desiredAspectRatio = 16 / 9;
-  const threshholdForRatioEnforcement = 0.04; // meural will crop the image which is probably fine, but not beyond 4%
+  const threshholdForRatioEnforcement = 0.02; // meural will crop the image which is probably fine, but not beyond 2%
 
   const imageProperties = await getImageProperties(convertedFileName);
 
@@ -98,8 +110,8 @@ export const processPdf = async (inputFile: string, convertedFileName: string) =
     1 - Math.abs(imageWidth * desiredAspectRatio) / Math.abs(imageHeight) >
     threshholdForRatioEnforcement
   ) {
-    logger(`Image needs cropping`, {processLevel: 2});
+    logger(`Cropping ${convertedFileName}`);
     await cropImage(convertedFileName, imageWidth, imageWidth * desiredAspectRatio);
-    logger(`Complete`, {processLevel: 3, sentiment: 'positive'});
+    logger(`Processesd ${convertedFileName}`, {sentiment: 'positive'});
   }
 };

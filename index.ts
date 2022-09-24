@@ -1,4 +1,5 @@
 import config from './config.json';
+import pLimit from 'p-limit';
 import {
   clearDirectory,
   downloadNewspaperPDFs,
@@ -20,13 +21,19 @@ import {MeuralClient, MeuralDevice} from './meural';
   const pdfs = await getDirectoryContents(NEWSPAPAPER_CACHE_PATH);
 
   // Convert each PDF to a JPEG, resize if needed
+  const limit = pLimit(config.concurrent_image_processing);
+  const throttledProcessingTasks = [];
   for (const pdf of pdfs) {
-    logger(`Converting ${pdf}`);
-    await processPdf(
-      `${NEWSPAPAPER_CACHE_PATH}/${pdf}`,
-      `${NEWSPAPAPER_CACHE_PATH}/jpgs/${pdf.replace('.pdf', '.jpg')}`
+    throttledProcessingTasks.push(
+      limit(() =>
+        processPdf(
+          `${NEWSPAPAPER_CACHE_PATH}/${pdf}`,
+          `${NEWSPAPAPER_CACHE_PATH}/jpgs/${pdf.replace('.pdf', '.jpg')}`
+        )
+      )
     );
   }
+  await Promise.all(throttledProcessingTasks);
 
   // Log into Meural
   if (!config.meural_email || !config.meural_password)
