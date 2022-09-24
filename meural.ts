@@ -70,7 +70,7 @@ export class MeuralClient {
   }
 
   async getGalleryItems(id: number): Promise<MeuralItem[]> {
-    const response = await axios(`https://api.meural.com/v1/galleries/${id}/items`, {
+    const response = await axios(`https://api.meural.com/v1/galleries/${id}/items?count=100`, {
       headers: this.headers,
     });
 
