@@ -94,6 +94,15 @@ export const cropImage = async (file: string, width: number, height: number) => 
   });
 };
 
+export const extendImage = async (file: string, width: number, height: number) => {
+  return new Promise((resolve, reject) => {
+    im.convert(['-extent', `${width}x${height}`, file, file], async err => {
+      if (err) reject(err);
+      resolve(true);
+    });
+  });
+};
+
 export const processPdf = async (inputFile: string, convertedFileName: string) => {
   logger(`Converting ${inputFile}`);
   await convertImage(inputFile, convertedFileName);
@@ -106,12 +115,16 @@ export const processPdf = async (inputFile: string, convertedFileName: string) =
   const imageWidth = imageProperties.width || 0;
   const imageHeight = imageProperties.height || 0;
 
-  if (
-    1 - Math.abs(imageWidth * desiredAspectRatio) / Math.abs(imageHeight) >
-    threshholdForRatioEnforcement
-  ) {
-    logger(`Cropping ${convertedFileName}`);
-    await cropImage(convertedFileName, imageWidth, imageWidth * desiredAspectRatio);
-    logger(`Processesd ${convertedFileName}`, {sentiment: 'positive'});
+  const percentageOverOrUnderRatio = 1 - (imageWidth * desiredAspectRatio) / imageHeight;
+
+  if (Math.abs(percentageOverOrUnderRatio) > threshholdForRatioEnforcement) {
+    if (percentageOverOrUnderRatio < 0) {
+      logger(`Extending ${convertedFileName}`);
+      await extendImage(convertedFileName, imageWidth, imageWidth * desiredAspectRatio);
+    } else {
+      logger(`Cropping ${convertedFileName}`);
+      await cropImage(convertedFileName, imageWidth, imageWidth * desiredAspectRatio);
+    }
   }
+  logger(`Processesd ${convertedFileName}`, {sentiment: 'positive'});
 };
