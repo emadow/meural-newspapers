@@ -22,5 +22,7 @@
   {"url": "WI_WSJ.pdf", "name": "Wisconsin State Journal", "shortname": "wisconsinstatejo"},
   {"url": "CAN_TGAM.pdf", "name": "The Globe and Mail", "shortname": "globeandmail"},
   {"url": "NEWZ_DP.pdf", "name": "The Dominion Post", "shortname": "dominionpost"},
-  {"url": "UK_TG.pdf", "name": "The Guardian", "shortname": "guardian"}
+  {"url": "UK_TG.pdf", "name": "The Guardian", "shortname": "guardian"},
+  {"url": "FL_OS.pdf", "name": "Orlando Sentinel", "shortname": "orlsentinel"}
+  
 ]
