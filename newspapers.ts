@@ -33,13 +33,15 @@ export const getDirectoryContents = async (dir: string): Promise<string[]> => {
   });
 };
 
-export const clearDirectory = async (dir: string) => {
-  const files = await getDirectoryContents(dir);
-  for (const file of files) {
-    fs.unlink(path.join(dir, file), err => {
-      if (err) throw err;
-    });
-  }
+export const clearDirectory = async (dir: string): Promise<void> => {
+  const allFiles = await fs.promises.readdir(dir);
+  const files = allFiles.filter(
+    file => file !== 'jpgs' && file.startsWith('.') === false
+  );
+
+  await Promise.all(
+    files.map(file => fs.promises.unlink(path.join(dir, file)))
+  );
 };
 
 export const downloadNewspaperPDFs = async () => {
