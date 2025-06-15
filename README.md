@@ -8,5 +8,6 @@ The goal of this project is to fetch newspaper front pages every morning to disp
 * Copy the config example, and fill in your Meural credentials: `cp config.example.json config.json`
 * Run `npx tsc && node index.js` to compile and run (for now)
 
-Authentication now uses Amazon Cognito, mirroring the official Meural login flow.
+Authentication now uses Amazon Cognito via the AWS SDK, mirroring the official
+Meural login flow.
 

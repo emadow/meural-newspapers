@@ -1,6 +1,10 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
+import {
+  CognitoIdentityProviderClient,
+  InitiateAuthCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
 
 interface MeuralItem {
   id: number;
@@ -40,25 +44,18 @@ export class MeuralClient {
   }
 
   async authenticate() {
-    const cognitoRequest = {
+    const client = new CognitoIdentityProviderClient({ region: 'us-east-1' });
+    const command = new InitiateAuthCommand({
+      AuthFlow: 'USER_PASSWORD_AUTH',
+      ClientId: '6pebphee0esfi8b7baqrmtv8k',
       AuthParameters: {
         USERNAME: this.username,
         PASSWORD: this.password,
       },
-      AuthFlow: 'USER_PASSWORD_AUTH',
-      ClientId: '6pebphee0esfi8b7baqrmtv8k',
-    };
-
-    const response = await axios('https://cognito-idp.us-east-1.amazonaws.com/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-amz-json-1.1',
-        'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
-      },
-      data: JSON.stringify(cognitoRequest),
     });
 
-    this.authToken = response.data.AuthenticationResult.IdToken;
+    const response = await client.send(command);
+    this.authToken = response.AuthenticationResult?.IdToken;
     return this.authToken;
   }
 
