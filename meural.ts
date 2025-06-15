@@ -35,21 +35,30 @@ export class MeuralClient {
   get headers() {
     return {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Token ${this.authToken}`,
+      Authorization: `Bearer ${this.authToken}`,
     };
   }
 
   async authenticate() {
-    const params = new URLSearchParams();
-    params.append('username', this.username);
-    params.append('password', this.password);
+    const cognitoRequest = {
+      AuthParameters: {
+        USERNAME: this.username,
+        PASSWORD: this.password,
+      },
+      AuthFlow: 'USER_PASSWORD_AUTH',
+      ClientId: '6pebphee0esfi8b7baqrmtv8k',
+    };
 
-    const response = await axios('https://api.meural.com/v1/authenticate', {
+    const response = await axios('https://cognito-idp.us-east-1.amazonaws.com/', {
       method: 'POST',
-      data: params,
+      headers: {
+        'Content-Type': 'application/x-amz-json-1.1',
+        'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
+      },
+      data: JSON.stringify(cognitoRequest),
     });
 
-    this.authToken = response.data.token;
+    this.authToken = response.data.AuthenticationResult.IdToken;
     return this.authToken;
   }
 
