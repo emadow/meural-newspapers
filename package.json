@@ -5,6 +5,7 @@
   "main": "index.js",
   "prettier": "prettier-airbnb-config",
   "scripts": {
+    "pretest": "npx tsc || true",
     "test": "node --test"
   },
   "author": "Evan Madow",
