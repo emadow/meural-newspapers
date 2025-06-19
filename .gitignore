@@ -1,5 +1,6 @@
 .DS_Store
 *.js
+!tests/*.js
 node_modules
 newspaper-cache/*.pdf
 newspaper-cache/jpgs/*
