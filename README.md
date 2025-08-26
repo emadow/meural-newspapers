@@ -31,4 +31,24 @@ Fetches newspaper front pages each morning and uploads them to a Meural digital 
 - Concurrency is controlled with `p-limit`, and network requests are performed with `axios`.
 - Logging output is centralized through `logger.ts`.
 
+## Automating with Cron
+
+To keep your frame up to date automatically, schedule the script with cron.
+
+1. Open your crontab editor:
+   ```sh
+   crontab -e
+   ```
+
+2. Add a job to run the script at your desired time. For example, to run every day at 6:00 AM:
+   ```cron
+   0 6 * * * cd /path/to/meural-newspapers && npm start >> /var/log/meural-newspapers.log 2>&1
+   ```
+   This navigates to the project directory and runs `npm start`, appending output to a log file.
+
+   Another example, running at 7:30 AM on weekdays:
+   ```cron
+   30 7 * * 1-5 cd /path/to/meural-newspapers && npm start >> /var/log/meural-newspapers.log 2>&1
+   ```
+
 Enjoy seeing fresh headlines on your Meural frame every day!
