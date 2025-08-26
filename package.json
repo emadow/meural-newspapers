@@ -5,7 +5,10 @@
   "main": "index.js",
   "prettier": "prettier-airbnb-config",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "bash setup.sh",
+    "start": "node index.js",
+    "build": "tsc",
+    "test": "tsc --noEmit"
   },
   "author": "Evan Madow",
   "license": "ISC",
