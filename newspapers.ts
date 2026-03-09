@@ -8,7 +8,8 @@ import {logger} from './logger';
 import config from './config.json';
 import newspapers from './newspapers.json';
 
-export const NEWSPAPER_BASE_URL = 'https://cdn.freedomforum.org/dfp/pdf{DAY_OF_MONTH}/';
+export const NEWSPAPER_URL =
+  'https://d2dr22b2lm4tvw.cloudfront.net/{NEWSPAPER_SLUG}/{NEWSPAPER_DATE}/front-page.pdf';
 export const NEWSPAPAPER_CACHE_PATH = path.resolve(__dirname, './newspaper-cache');
 
 export const downloadFile = async (url: string, path: string) => {
@@ -35,19 +36,13 @@ export const getDirectoryContents = async (dir: string): Promise<string[]> => {
 
 export const clearDirectory = async (dir: string): Promise<void> => {
   const allFiles = await fs.promises.readdir(dir);
-  const files = allFiles.filter(
-    file => file !== 'jpgs' && file.startsWith('.') === false
-  );
+  const files = allFiles.filter(file => file !== 'jpgs' && file.startsWith('.') === false);
 
-  await Promise.all(
-    files.map(file => fs.promises.unlink(path.join(dir, file)))
-  );
+  await Promise.all(files.map(file => fs.promises.unlink(path.join(dir, file))));
 };
 
 export const downloadNewspaperPDFs = async () => {
-  const date = new Date();
-  const month = date.getMonth() + 1;
-  const dayOfMonth = date.getDate();
+  const todaysDate = new Date().toLocaleDateString('en-CA');
 
   const papersToDownload = [];
   const limit = pLimit(config.concurrent_downloads);
@@ -56,8 +51,11 @@ export const downloadNewspaperPDFs = async () => {
     papersToDownload.push(
       limit(() =>
         downloadFile(
-          NEWSPAPER_BASE_URL.replace('{DAY_OF_MONTH}', `${dayOfMonth}`) + newspaper.url,
-          `${NEWSPAPAPER_CACHE_PATH}/${newspaper.shortname}_${month}_${dayOfMonth}.pdf`
+          NEWSPAPER_URL.replace('{NEWSPAPER_DATE}', `${todaysDate}`).replace(
+            '{NEWSPAPER_SLUG}',
+            newspaper.url.toLowerCase()
+          ),
+          `${NEWSPAPAPER_CACHE_PATH}/${newspaper.shortname}_${todaysDate}.pdf`
         )
       )
     );
