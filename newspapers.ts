@@ -42,7 +42,12 @@ export const clearDirectory = async (dir: string): Promise<void> => {
 };
 
 export const downloadNewspaperPDFs = async () => {
-  const todaysDate = new Date().toLocaleDateString('en-CA');
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+
+  const todaysDate = `${year}-${month}-${day}`;
 
   const papersToDownload = [];
   const limit = pLimit(config.concurrent_downloads);
