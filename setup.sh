@@ -172,6 +172,12 @@ if [ ! -f config.json ]; then
   log "Please edit config.json with your Meural credentials."
 fi
 
+if [ ! -f newspapers.json ]; then
+  log "Creating newspapers.json from template..."
+  cp newspapers.example.json newspapers.json
+  log "Please edit newspapers.json to select your desired papers."
+fi
+
 log "Compiling TypeScript..."
 npx tsc
 

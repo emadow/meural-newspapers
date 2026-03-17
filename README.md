@@ -28,6 +28,8 @@ Meural Newspapers is an automation app that fetches daily newspaper front pages,
    - `concurrent_downloads`
    - `concurrent_image_processing`
 
+   Open `newspapers.json` and add/remove any entries. Find the URI slug from the full list of newspapers here: https://frontpages.freedomforum.org/
+
 3. **Run the app**
    ```sh
    npm start
@@ -48,22 +50,22 @@ When you run `npm start`, the app executes a full ingest-and-publish pipeline:
 
 ## Project Components
 
-- **`index.ts` (orchestrator)**  
+- **`index.ts` (orchestrator)**
   Coordinates the full workflow: cache cleanup, PDF processing, Meural auth, gallery maintenance, and device push.
 
-- **`newspapers.ts` (download + image processing)**  
+- **`newspapers.ts` (download + image processing)**
   Builds dated newspaper PDF URLs, downloads files, converts PDFs to JPG via ImageMagick, and applies aspect-ratio correction logic.
 
-- **`newspapers.json` (newspaper catalog)**  
+- **`newspapers.json` (newspaper catalog)**
   Source list of newspapers to fetch each day.
 
-- **`meural.ts` (Meural API client)**  
+- **`meural.ts` (Meural API client)**
   Handles Cognito authentication and all Meural API calls for devices, galleries, item upload, deletion, and gallery push.
 
-- **`logger.ts` (structured console logging)**  
+- **`logger.ts` (structured console logging)**
   Produces readable process logs with simple nesting and sentiment indicators.
 
-- **`setup.sh` (environment bootstrap)**  
+- **`setup.sh` (environment bootstrap)**
   Installs pinned runtime/tooling dependencies and compiles the app.
 
 ## Automating with Cron

@@ -4,3 +4,4 @@ node_modules
 newspaper-cache/*.pdf
 newspaper-cache/jpgs/*
 config.json
+newspapers.json
